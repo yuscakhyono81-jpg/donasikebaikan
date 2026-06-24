@@ -1,0 +1,152 @@
+import { Suspense } from "react";
+import { createClient } from "@/lib/supabase/server";
+import HeroSection from "@/components/home/HeroSection";
+import LiveDonationTicker from "@/components/home/LiveDonationTicker";
+import CategoryFilter from "@/components/home/CategoryFilter";
+import UrgentCampaigns from "@/components/home/UrgentCampaigns";
+import FeaturedCampaigns from "@/components/home/FeaturedCampaigns";
+import AllCampaigns from "@/components/home/AllCampaigns";
+import ImpactCounter from "@/components/home/ImpactCounter";
+import TestimonialCarousel from "@/components/home/TestimonialCarousel";
+import ZakatCalculatorWidget from "@/components/home/ZakatCalculatorWidget";
+import type { Campaign, Category, DonationPrayer } from "@/types";
+
+export const revalidate = 60;
+
+export default async function HomePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ category?: string; q?: string }>;
+}) {
+  const { category } = await searchParams;
+  const supabase = await createClient();
+
+  const [
+    { data: campaigns },
+    { data: categories },
+    { data: recentDonations },
+    { data: prayers },
+    { count: totalDonors },
+    { count: completedCount },
+  ] = await Promise.all([
+    supabase
+      .from("campaigns")
+      .select("*, category:categories(*)")
+      .eq("status", "active")
+      .order("is_featured", { ascending: false })
+      .order("created_at", { ascending: false })
+      .limit(30),
+    supabase
+      .from("categories")
+      .select("*")
+      .eq("is_active", true)
+      .order("sort_order"),
+    supabase
+      .from("donations")
+      .select("id, donor_name, amount, campaign_id, created_at, is_anonymous, campaigns(title)")
+      .eq("status", "success")
+      .order("created_at", { ascending: false })
+      .limit(20),
+    supabase
+      .from("donation_prayers")
+      .select("*")
+      .eq("is_visible", true)
+      .order("created_at", { ascending: false })
+      .limit(8),
+    supabase.from("donations").select("*", { count: "exact", head: true }).eq("status", "success"),
+    supabase.from("campaigns").select("*", { count: "exact", head: true }).eq("status", "completed"),
+  ]);
+
+  const allCampaigns = (campaigns as Campaign[]) ?? [];
+  const allCategories = (categories as Category[]) ?? [];
+
+  const filteredCampaigns = category
+    ? allCampaigns.filter((c) => c.category?.slug === category)
+    : allCampaigns;
+
+  const urgentCampaigns = filteredCampaigns.filter((c) => c.is_urgent).slice(0, 3);
+  const featuredCampaigns = filteredCampaigns.filter((c) => c.is_featured && !c.is_urgent).slice(0, 3);
+
+  const totalCollected = allCampaigns.reduce((sum, c) => sum + (c.collected_amount ?? 0), 0);
+  const activeCampaignsCount = allCampaigns.length;
+
+  type TickerRaw = {
+    id: string;
+    donor_name: string;
+    amount: number;
+    created_at: string;
+    is_anonymous: boolean;
+    campaigns: { title: string }[] | { title: string } | null;
+  };
+
+  const tickerDonations = (recentDonations ?? []).map((d: TickerRaw) => {
+    const campaignTitle = Array.isArray(d.campaigns)
+      ? (d.campaigns[0]?.title ?? "Campaign")
+      : (d.campaigns?.title ?? "Campaign");
+    return {
+      id: d.id,
+      donor_name: d.donor_name,
+      amount: d.amount,
+      campaign_title: campaignTitle,
+      created_at: d.created_at,
+      is_anonymous: d.is_anonymous,
+    };
+  });
+
+  const heroStats = {
+    totalCollected,
+    totalDonors: totalDonors ?? 0,
+    totalCampaigns: activeCampaignsCount,
+  };
+
+  const impactStats = {
+    totalCollected,
+    totalDonors: totalDonors ?? 0,
+    totalBeneficiaries: Math.floor((totalDonors ?? 0) * 2.3),
+    totalCampaignsCompleted: completedCount ?? 0,
+  };
+
+  return (
+    <div className="min-h-screen">
+      {/* Hero */}
+      <HeroSection stats={heroStats} />
+
+      {/* Live Ticker */}
+      {tickerDonations.length > 0 && (
+        <LiveDonationTicker initialDonations={tickerDonations} />
+      )}
+
+      {/* Main Content */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-12">
+        {/* Category Filter */}
+        <Suspense>
+          <section>
+            <CategoryFilter categories={allCategories} />
+          </section>
+        </Suspense>
+
+        {/* Urgent Campaigns */}
+        <UrgentCampaigns campaigns={urgentCampaigns} />
+
+        {/* Featured Campaigns */}
+        <FeaturedCampaigns campaigns={featuredCampaigns} />
+
+        {/* All Campaigns */}
+        <AllCampaigns
+          initialCampaigns={filteredCampaigns.slice(0, 9)}
+          initialTotal={filteredCampaigns.length}
+          categorySlug={category}
+        />
+
+        {/* Impact Counter */}
+        <ImpactCounter stats={impactStats} />
+
+        {/* Zakat Calculator Widget */}
+        <ZakatCalculatorWidget />
+
+        {/* Testimonials */}
+        <TestimonialCarousel testimonials={(prayers as DonationPrayer[]) ?? []} />
+      </div>
+    </div>
+  );
+}

@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <rect width="512" height="512" rx="80" fill="#16a34a"/>
+  <!-- Stylised "D" lettermark: flat left bar + smooth right curve -->
+  <path d="M 140 130 L 200 130 C 400 130 400 382 200 382 L 140 382 Z" fill="white"/>
+</svg>
