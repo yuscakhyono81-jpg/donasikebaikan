@@ -13,18 +13,20 @@ export default function FeaturedCampaigns({ campaigns }: FeaturedCampaignsProps)
   return (
     <section>
       <div className="flex items-center justify-between mb-5">
-        <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 bg-secondary-500 rounded-lg flex items-center justify-center">
+        <div className="flex items-center gap-3">
+          <div className="w-9 h-9 bg-gradient-to-br from-secondary-400 to-secondary-600 rounded-xl flex items-center justify-center shadow-sm shadow-secondary-200">
             <Star className="w-4 h-4 text-white fill-white" />
           </div>
           <div>
-            <h2 className="text-lg font-bold text-slate-900">Campaign Pilihan</h2>
+            <h2 className="text-lg font-bold text-slate-900 leading-none mb-0.5">
+              Campaign Pilihan
+            </h2>
             <p className="text-xs text-slate-500">Dikurasi khusus oleh tim LAZIS NUR</p>
           </div>
         </div>
         <Link
           href="/campaign?filter=featured"
-          className="text-sm text-primary-600 hover:text-primary-700 font-medium flex items-center gap-1"
+          className="text-sm text-primary-600 hover:text-primary-700 font-medium flex items-center gap-1 shrink-0"
         >
           Lihat Semua <ArrowRight className="w-4 h-4" />
         </Link>

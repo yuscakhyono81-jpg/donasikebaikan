@@ -2,13 +2,15 @@ import { Suspense } from "react";
 import { createClient } from "@/lib/supabase/server";
 import HeroSection from "@/components/home/HeroSection";
 import LiveDonationTicker from "@/components/home/LiveDonationTicker";
+import HowItWorks from "@/components/home/HowItWorks";
 import CategoryFilter from "@/components/home/CategoryFilter";
 import UrgentCampaigns from "@/components/home/UrgentCampaigns";
 import FeaturedCampaigns from "@/components/home/FeaturedCampaigns";
 import AllCampaigns from "@/components/home/AllCampaigns";
-import ImpactCounter from "@/components/home/ImpactCounter";
-import TestimonialCarousel from "@/components/home/TestimonialCarousel";
+import StatsBanner from "@/components/home/StatsBanner";
 import ZakatCalculatorWidget from "@/components/home/ZakatCalculatorWidget";
+import FAQ from "@/components/home/FAQ";
+import TestimonialCarousel from "@/components/home/TestimonialCarousel";
 import type { Campaign, Category, DonationPrayer } from "@/types";
 
 export const revalidate = 60;
@@ -68,7 +70,6 @@ export default async function HomePage({
   const featuredCampaigns = filteredCampaigns.filter((c) => c.is_featured && !c.is_urgent).slice(0, 3);
 
   const totalCollected = allCampaigns.reduce((sum, c) => sum + (c.collected_amount ?? 0), 0);
-  const activeCampaignsCount = allCampaigns.length;
 
   type TickerRaw = {
     id: string;
@@ -96,28 +97,26 @@ export default async function HomePage({
   const heroStats = {
     totalCollected,
     totalDonors: totalDonors ?? 0,
-    totalCampaigns: activeCampaignsCount,
-  };
-
-  const impactStats = {
-    totalCollected,
-    totalDonors: totalDonors ?? 0,
-    totalBeneficiaries: Math.floor((totalDonors ?? 0) * 2.3),
-    totalCampaignsCompleted: completedCount ?? 0,
+    totalCampaigns: allCampaigns.length,
   };
 
   return (
-    <div className="min-h-screen">
-      {/* Hero */}
+    <div className="min-h-screen bg-white">
+      {/* ── 1. Hero Banner ── */}
       <HeroSection stats={heroStats} />
 
-      {/* Live Ticker */}
+      {/* ── 2. Feature strip (HowItWorks) ── */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 border-b border-slate-100">
+        <HowItWorks />
+      </div>
+
+      {/* ── 3. Live Donation Ticker ── */}
       {tickerDonations.length > 0 && (
         <LiveDonationTicker initialDonations={tickerDonations} />
       )}
 
-      {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-12">
+      {/* ── 4. Campaign sections ── */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-14">
         {/* Category Filter */}
         <Suspense>
           <section>
@@ -137,14 +136,15 @@ export default async function HomePage({
           initialTotal={filteredCampaigns.length}
           categorySlug={category}
         />
+      </div>
 
-        {/* Impact Counter */}
-        <ImpactCounter stats={impactStats} />
+      {/* ── 5. Stats Banner — big number ── */}
+      <StatsBanner totalDonors={totalDonors ?? 0} />
 
-        {/* Zakat Calculator Widget */}
+      {/* ── 6. Zakat Calculator + FAQ + Testimonials ── */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-16">
         <ZakatCalculatorWidget />
-
-        {/* Testimonials */}
+        <FAQ />
         <TestimonialCarousel testimonials={(prayers as DonationPrayer[]) ?? []} />
       </div>
     </div>
