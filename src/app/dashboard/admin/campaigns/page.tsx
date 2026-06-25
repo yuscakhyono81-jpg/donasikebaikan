@@ -24,13 +24,16 @@ export default async function AdminCampaignsPage() {
   if (campaignError) {
     return (
       <div className="max-w-xl mx-auto mt-10 p-6 bg-red-50 border border-red-200 rounded-2xl">
-        <h2 className="font-bold text-red-700 mb-2">Debug Error</h2>
+        <h2 className="font-bold text-red-700 mb-2">DB Error</h2>
         <pre className="text-xs text-red-600 whitespace-pre-wrap">{JSON.stringify(campaignError, null, 2)}</pre>
       </div>
     );
   }
 
-  return (
+  // Debug: log data shape
+  console.log("[campaigns] count:", campaigns?.length, "first:", JSON.stringify(campaigns?.[0])?.slice(0, 200));
+
+  try { return (
     <div className="max-w-6xl mx-auto space-y-6">
       <div className="flex items-center justify-between">
         <div>
@@ -134,5 +137,14 @@ export default async function AdminCampaignsPage() {
         )}
       </div>
     </div>
-  );
+  ); } catch (renderErr) {
+    const msg = renderErr instanceof Error ? `${renderErr.message}\n${renderErr.stack}` : String(renderErr);
+    console.error("[campaigns] Render error:", msg);
+    return (
+      <div className="max-w-xl mx-auto mt-10 p-6 bg-orange-50 border border-orange-200 rounded-2xl">
+        <h2 className="font-bold text-orange-700 mb-2">Render Error</h2>
+        <pre className="text-xs text-orange-800 whitespace-pre-wrap">{msg}</pre>
+      </div>
+    );
+  }
 }
