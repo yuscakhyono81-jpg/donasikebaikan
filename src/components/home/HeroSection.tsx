@@ -15,9 +15,12 @@ interface HeroStats {
 
 interface HeroSectionProps {
   stats: HeroStats;
+  bannerUrl?: string;
+  headline?: string;
+  subtitle?: string;
 }
 
-export default function HeroSection({ stats }: HeroSectionProps) {
+export default function HeroSection({ stats, bannerUrl = "/banner-donasi.png", headline = "Satu Sedekah, Seribu Doa", subtitle = "Zakat & Sedekah tersalur transparan — setiap donasi tercatat, setiap dampak terbukti" }: HeroSectionProps) {
   const router = useRouter();
   const [query, setQuery] = useState("");
 
@@ -30,7 +33,7 @@ export default function HeroSection({ stats }: HeroSectionProps) {
     <section className="relative min-h-[100svh] sm:min-h-[90vh] flex flex-col overflow-hidden">
       {/* Background image */}
       <Image
-        src="/banner-donasi.png"
+        src={bannerUrl}
         alt="Banner DonasiKebaikan"
         fill
         priority
@@ -99,20 +102,20 @@ export default function HeroSection({ stats }: HeroSectionProps) {
       <div className="relative z-10 flex-1 flex flex-col justify-end max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 pb-16 sm:pb-20">
         {/* Headline */}
         <h1 className="animate-slide-up text-[clamp(3rem,9vw,6.5rem)] font-black text-white leading-none tracking-tight drop-shadow-lg">
-          Satu Sedekah,
+          {headline.split(",")[0]}{headline.includes(",") ? "," : ""}
         </h1>
         <div className="flex flex-col sm:flex-row sm:items-baseline gap-2 sm:gap-8 mb-6">
           <h1
             className="animate-slide-up text-[clamp(3rem,9vw,6.5rem)] font-black text-primary-400 leading-none tracking-tight drop-shadow-lg"
             style={{ animationDelay: "80ms" }}
           >
-            Seribu Doa
+            {headline.includes(",") ? headline.split(",").slice(1).join(",").trim() : ""}
           </h1>
           <p
             className="animate-slide-up text-slate-200 text-base sm:text-lg max-w-sm leading-snug drop-shadow"
             style={{ animationDelay: "160ms" }}
           >
-            Zakat &amp; Sedekah tersalur transparan — setiap donasi tercatat, setiap dampak terbukti
+            {subtitle}
           </p>
         </div>
 

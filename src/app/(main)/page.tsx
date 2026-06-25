@@ -30,6 +30,7 @@ export default async function HomePage({
     { data: prayers },
     { count: totalDonors },
     { count: completedCount },
+    { data: siteSettingsRows },
   ] = await Promise.all([
     supabase
       .from("campaigns")
@@ -57,6 +58,7 @@ export default async function HomePage({
       .limit(8),
     supabase.from("donations").select("*", { count: "exact", head: true }).eq("status", "success"),
     supabase.from("campaigns").select("*", { count: "exact", head: true }).eq("status", "completed"),
+    supabase.from("site_settings").select("*"),
   ]);
 
   const allCampaigns = (campaigns as Campaign[]) ?? [];
@@ -100,10 +102,20 @@ export default async function HomePage({
     totalCampaigns: allCampaigns.length,
   };
 
+  const siteSettings: Record<string, string> = {};
+  for (const row of siteSettingsRows ?? []) {
+    siteSettings[row.key] = row.value;
+  }
+
   return (
     <div className="min-h-screen bg-white">
       {/* ── 1. Hero Banner ── */}
-      <HeroSection stats={heroStats} />
+      <HeroSection
+        stats={heroStats}
+        bannerUrl={siteSettings.hero_banner_url ?? "/banner-donasi.png"}
+        headline={siteSettings.hero_headline ?? "Satu Sedekah, Seribu Doa"}
+        subtitle={siteSettings.hero_subtitle ?? "Zakat & Sedekah tersalur transparan — setiap donasi tercatat, setiap dampak terbukti"}
+      />
 
       {/* ── 2. Live Donation Ticker ── */}
       {tickerDonations.length > 0 && (

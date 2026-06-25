@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import {
   LayoutDashboard,
@@ -23,6 +24,7 @@ import {
   Settings,
   Tag,
   Upload,
+  Layers,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { createClient } from "@/lib/supabase/client";
@@ -52,6 +54,7 @@ const navByRole: Record<string, NavItem[]> = {
     { href: "/dashboard/admin/reports", label: "Laporan", icon: <FileBarChart2 size={18} /> },
     { href: "/dashboard/admin/import", label: "Import Data", icon: <Upload size={18} /> },
     { href: "/dashboard/admin/users", label: "Pengguna", icon: <Settings size={18} /> },
+    { href: "/dashboard/admin/settings", label: "Pengaturan Beranda", icon: <Layers size={18} /> },
   ],
   staff: [
     { href: "/dashboard/staff", label: "Ikhtisar", icon: <LayoutDashboard size={18} /> },
@@ -101,13 +104,16 @@ export default function DashboardSidebar({ profile }: Props) {
   const sidebarContent = (
     <div className="flex flex-col h-full">
       {/* Logo */}
-      <div className="flex items-center gap-2.5 px-5 py-4 border-b border-slate-100">
-        <div className="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center shrink-0">
-          <Heart className="w-4 h-4 text-white fill-white" />
-        </div>
-        <span className="font-extrabold text-slate-900 leading-none">
-          Donasi<span className="text-primary-600">Kebaikan</span>
-        </span>
+      <div className="px-5 py-4 border-b border-slate-100">
+        <Link href="/">
+          <Image
+            src="/logo.png"
+            alt="DonasiKebaikan"
+            width={150}
+            height={38}
+            className="h-9 w-auto object-contain"
+          />
+        </Link>
       </div>
 
       {/* User info */}
