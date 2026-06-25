@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { Heart, MessageCircle } from "lucide-react";
+import Image from "next/image";
+import { MessageCircle } from "lucide-react";
 
 const FOOTER_LINKS = {
   program: [
@@ -26,13 +27,14 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
           {/* Brand */}
           <div className="lg:col-span-2">
-            <Link href="/" className="flex items-center gap-2.5 mb-4">
-              <div className="w-9 h-9 bg-primary-600 rounded-xl flex items-center justify-center">
-                <Heart className="w-5 h-5 text-white fill-white" />
-              </div>
-              <span className="font-extrabold text-xl text-white leading-none">
-                Donasi<span className="text-primary-400">Kebaikan</span>
-              </span>
+            <Link href="/" className="inline-block mb-4">
+              <Image
+                src="/logo.png"
+                alt="DonasiKebaikan"
+                width={180}
+                height={45}
+                className="h-11 w-auto object-contain brightness-0 invert"
+              />
             </Link>
             <p className="text-sm leading-relaxed mb-4 max-w-sm">
               Platform penghimpunan dana zakat, infaq, qurban, dan program sosial resmi LAZIS NUR.

@@ -2,8 +2,9 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { Menu, X, Heart, Search, User } from "lucide-react";
+import { Menu, X, Search, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/Button";
 import SearchModal from "@/components/SearchModal";
@@ -64,13 +65,15 @@ export default function Navbar() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
-            <Link href="/" className="flex items-center gap-2.5 shrink-0">
-              <div className="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center">
-                <Heart className="w-4 h-4 text-white fill-white" />
-              </div>
-              <span className="font-extrabold text-lg text-slate-900 leading-none">
-                Donasi<span className="text-primary-600">Kebaikan</span>
-              </span>
+            <Link href="/" className="shrink-0">
+              <Image
+                src="/logo.png"
+                alt="DonasiKebaikan"
+                width={160}
+                height={40}
+                className="h-10 w-auto object-contain"
+                priority
+              />
             </Link>
 
             {/* Desktop Nav */}

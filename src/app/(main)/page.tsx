@@ -105,15 +105,15 @@ export default async function HomePage({
       {/* ── 1. Hero Banner ── */}
       <HeroSection stats={heroStats} />
 
-      {/* ── 2. Feature strip (HowItWorks) ── */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 border-b border-slate-100">
-        <HowItWorks />
-      </div>
-
-      {/* ── 3. Live Donation Ticker ── */}
+      {/* ── 2. Live Donation Ticker ── */}
       {tickerDonations.length > 0 && (
         <LiveDonationTicker initialDonations={tickerDonations} />
       )}
+
+      {/* ── 3. Feature strip (HowItWorks) ── */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 border-b border-slate-100">
+        <HowItWorks />
+      </div>
 
       {/* ── 4. Campaign sections ── */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-14">
@@ -139,7 +139,7 @@ export default async function HomePage({
       </div>
 
       {/* ── 5. Stats Banner — big number ── */}
-      <StatsBanner totalDonors={totalDonors ?? 0} />
+      <StatsBanner totalDonors={totalDonors ?? 0} totalCollected={totalCollected} totalCampaigns={allCampaigns.length} />
 
       {/* ── 6. Zakat Calculator + FAQ + Testimonials ── */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-16">

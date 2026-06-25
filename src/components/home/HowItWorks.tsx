@@ -1,29 +1,38 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { Zap, Shield, BarChart3 } from "lucide-react";
+import { Search, CreditCard, HandHeart, ArrowRight } from "lucide-react";
 
-const features = [
+const STEPS = [
   {
-    icon: Zap,
+    number: "01",
+    icon: Search,
     iconBg: "bg-primary-100",
     iconColor: "text-primary-600",
-    title: "Pilih & Donasi Instan",
-    desc: "Temukan program kebaikan, pilih nominal, dan selesaikan pembayaran dalam hitungan menit melalui berbagai metode.",
+    numberColor: "text-primary-500",
+    borderColor: "border-primary-200",
+    title: "Pilih Program Kebaikan",
+    desc: "Temukan campaign yang menyentuh hatimu — zakat, infaq, qurban, atau beasiswa yatim dhuafa.",
   },
   {
-    icon: Shield,
-    iconBg: "bg-blue-100",
-    iconColor: "text-blue-600",
-    title: "Aman & Terpercaya",
-    desc: "Terdaftar resmi di Kemenag, NPWP aktif, dan seluruh campaign diverifikasi ketat oleh tim LAZIS NUR.",
-  },
-  {
-    icon: BarChart3,
+    number: "02",
+    icon: CreditCard,
     iconBg: "bg-secondary-100",
     iconColor: "text-secondary-600",
-    title: "Transparan 100%",
-    desc: "Laporan penyaluran dana dikirim langsung ke donatur secara berkala. Setiap rupiah bisa dilacak kemanfaatannya.",
+    numberColor: "text-secondary-500",
+    borderColor: "border-secondary-200",
+    title: "Bayar dengan Mudah",
+    desc: "Transfer bank, QRIS, atau dompet digital — selesai dalam hitungan menit, konfirmasi otomatis.",
+  },
+  {
+    number: "03",
+    icon: HandHeart,
+    iconBg: "bg-blue-100",
+    iconColor: "text-blue-600",
+    numberColor: "text-blue-500",
+    borderColor: "border-blue-200",
+    title: "Dampak Nyata Tersalur",
+    desc: "Donasi disalurkan transparan, laporan berkala dikirim langsung ke WhatsApp atau email kamu.",
   },
 ];
 
@@ -51,34 +60,53 @@ export default function HowItWorks() {
   return (
     <section ref={ref} className="py-4">
       {/* Heading */}
-      <div className="scroll-reveal mb-10">
+      <div className="scroll-reveal mb-12 text-center">
         <p className="text-primary-600 text-sm font-bold uppercase tracking-widest mb-2">
-          Kenapa DonasiKebaikan?
+          Cara Berdonasi
         </p>
-        <h2 className="text-3xl sm:text-4xl font-black text-slate-900 leading-tight max-w-xl">
-          Donasi, <em className="not-italic text-primary-600">Cepat</em> seperti Kilat
+        <h2 className="text-3xl sm:text-4xl font-black text-slate-900 leading-tight">
+          3 Langkah <em className="not-italic text-primary-600">Mudah</em> Berdonasi
         </h2>
-        <p className="text-slate-500 mt-3 max-w-xl text-base leading-relaxed">
-          Platform zakat &amp; donasi resmi LAZIS NUR dengan teknologi modern — aman,
-          transparan, dan terasa dampaknya.
+        <p className="text-slate-500 mt-3 max-w-xl mx-auto text-base leading-relaxed">
+          Dari pilih program hingga dampak tersalur — semua bisa kamu pantau sendiri.
         </p>
       </div>
 
-      {/* Feature cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-        {features.map((f, i) => {
-          const Icon = f.icon;
+      {/* Steps */}
+      <div className="relative grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-4">
+        {/* Connecting line (desktop) */}
+        <div className="absolute top-12 left-[calc(16.6%+1rem)] right-[calc(16.6%+1rem)] h-0.5 bg-gradient-to-r from-primary-200 via-secondary-200 to-blue-200 hidden sm:block pointer-events-none" />
+
+        {STEPS.map((step, i) => {
+          const Icon = step.icon;
           return (
             <div
-              key={f.title}
-              className="scroll-reveal group"
-              style={{ transitionDelay: `${i * 100}ms` }}
+              key={step.number}
+              className="scroll-reveal relative flex flex-col items-center text-center"
+              style={{ transitionDelay: `${i * 120}ms` }}
             >
-              <div className={`w-12 h-12 ${f.iconBg} rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-200`}>
-                <Icon className={`w-6 h-6 ${f.iconColor}`} />
+              {/* Step circle with icon */}
+              <div className="relative mb-5">
+                <div className={`w-20 h-20 ${step.iconBg} rounded-2xl flex items-center justify-center shadow-md border-2 ${step.borderColor} relative z-10`}>
+                  <Icon className={`w-9 h-9 ${step.iconColor}`} />
+                </div>
+                {/* Number badge */}
+                <span className={`absolute -top-2 -right-2 w-7 h-7 rounded-full bg-white border-2 ${step.borderColor} flex items-center justify-center text-[11px] font-black ${step.numberColor} z-20`}>
+                  {step.number}
+                </span>
               </div>
-              <h3 className="font-bold text-slate-900 text-lg mb-2">{f.title}</h3>
-              <p className="text-slate-500 text-sm leading-relaxed">{f.desc}</p>
+
+              <h3 className="font-bold text-slate-900 text-lg mb-2">{step.title}</h3>
+              <p className="text-slate-500 text-sm leading-relaxed max-w-[220px]">{step.desc}</p>
+
+              {/* Arrow between steps (desktop) */}
+              {i < STEPS.length - 1 && (
+                <div className="absolute top-9 -right-5 hidden sm:flex items-center justify-center z-20">
+                  <div className="w-9 h-9 rounded-full bg-white border border-slate-200 shadow-sm flex items-center justify-center">
+                    <ArrowRight className="w-4 h-4 text-slate-400" />
+                  </div>
+                </div>
+              )}
             </div>
           );
         })}

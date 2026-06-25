@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Plus, Minus } from "lucide-react";
+import { Plus, Minus, HelpCircle, MessageCircle } from "lucide-react";
 
 const FAQS = [
   {
@@ -50,56 +50,86 @@ export default function FAQ() {
 
   return (
     <section ref={ref} className="py-4">
-      <div className="scroll-reveal mb-10">
-        <p className="text-primary-600 text-sm font-bold uppercase tracking-widest mb-2">FAQ</p>
-        <h2 className="text-3xl sm:text-4xl font-black text-slate-900 leading-tight">
-          Pertanyaan yang<br />Sering Ditanyakan.
-        </h2>
-      </div>
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-12 lg:gap-16 items-start">
+        {/* Left — heading + decoration */}
+        <div className="scroll-reveal lg:col-span-2 lg:sticky lg:top-24">
+          <div className="inline-flex items-center gap-2 bg-primary-50 text-primary-700 text-xs font-semibold px-3 py-1.5 rounded-full border border-primary-100 mb-5">
+            <MessageCircle className="w-3.5 h-3.5" />
+            FAQ
+          </div>
+          <h2 className="text-3xl sm:text-4xl font-black text-slate-900 leading-tight mb-4">
+            Pertanyaan yang<br />
+            <em className="not-italic text-primary-600">Sering Ditanyakan</em>
+          </h2>
+          <p className="text-slate-500 text-base leading-relaxed mb-8">
+            Belum menemukan jawaban yang kamu cari? Hubungi kami langsung.
+          </p>
 
-      <div className="space-y-2 max-w-3xl">
-        {FAQS.map((faq, i) => {
-          const isOpen = open === i;
-          return (
-            <div
-              key={i}
-              className="scroll-reveal border border-slate-200 rounded-2xl overflow-hidden bg-white transition-shadow hover:border-primary-200"
-              style={{ transitionDelay: `${i * 60}ms` }}
-            >
-              <button
-                onClick={() => setOpen(isOpen ? null : i)}
-                className="w-full flex items-center justify-between px-6 py-4 text-left gap-4"
-              >
-                <span className="font-semibold text-slate-900 text-sm sm:text-base">
-                  {faq.q}
-                </span>
-                <span
-                  className={`shrink-0 w-7 h-7 rounded-full flex items-center justify-center transition-all duration-200 ${
-                    isOpen
-                      ? "bg-primary-600 text-white"
-                      : "bg-slate-100 text-slate-500"
-                  }`}
-                >
-                  {isOpen ? (
-                    <Minus className="w-3.5 h-3.5" />
-                  ) : (
-                    <Plus className="w-3.5 h-3.5" />
-                  )}
-                </span>
-              </button>
-
-              {/* Answer — animated with max-height trick */}
-              <div
-                className="overflow-hidden transition-all duration-300 ease-in-out"
-                style={{ maxHeight: isOpen ? "200px" : "0px" }}
-              >
-                <p className="px-6 pb-5 text-slate-600 text-sm leading-relaxed">
-                  {faq.a}
-                </p>
-              </div>
+          {/* Big decorative icon */}
+          <div className="relative inline-block">
+            <div className="w-24 h-24 bg-primary-100 rounded-3xl flex items-center justify-center">
+              <HelpCircle className="w-12 h-12 text-primary-600" />
             </div>
-          );
-        })}
+            <div className="absolute -top-2 -right-2 w-8 h-8 bg-secondary-400 rounded-xl flex items-center justify-center text-white text-xs font-black shadow-lg">
+              {FAQS.length}
+            </div>
+          </div>
+
+          <div className="mt-8">
+            <a
+              href="https://wa.me/62811234567"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 text-sm font-medium text-primary-600 hover:text-primary-700 underline underline-offset-2"
+            >
+              Hubungi via WhatsApp →
+            </a>
+          </div>
+        </div>
+
+        {/* Right — accordion */}
+        <div className="lg:col-span-3 space-y-2">
+          {FAQS.map((faq, i) => {
+            const isOpen = open === i;
+            return (
+              <div
+                key={i}
+                className="scroll-reveal border border-slate-200 rounded-2xl overflow-hidden bg-white transition-all hover:border-primary-200 hover:shadow-sm"
+                style={{ transitionDelay: `${i * 60}ms` }}
+              >
+                <button
+                  onClick={() => setOpen(isOpen ? null : i)}
+                  className="w-full flex items-center justify-between px-6 py-4 text-left gap-4"
+                >
+                  <div className="flex items-center gap-3">
+                    <span className={`shrink-0 text-xs font-black tabular-nums w-5 ${isOpen ? "text-primary-600" : "text-slate-300"}`}>
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
+                    <span className="font-semibold text-slate-900 text-sm sm:text-base">
+                      {faq.q}
+                    </span>
+                  </div>
+                  <span
+                    className={`shrink-0 w-7 h-7 rounded-full flex items-center justify-center transition-all duration-200 ${
+                      isOpen ? "bg-primary-600 text-white" : "bg-slate-100 text-slate-500"
+                    }`}
+                  >
+                    {isOpen ? <Minus className="w-3.5 h-3.5" /> : <Plus className="w-3.5 h-3.5" />}
+                  </span>
+                </button>
+
+                <div
+                  className="overflow-hidden transition-all duration-300 ease-in-out"
+                  style={{ maxHeight: isOpen ? "200px" : "0px" }}
+                >
+                  <p className="px-6 pb-5 pl-14 text-slate-600 text-sm leading-relaxed">
+                    {faq.a}
+                  </p>
+                </div>
+              </div>
+            );
+          })}
+        </div>
       </div>
     </section>
   );
