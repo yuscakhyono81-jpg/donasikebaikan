@@ -16,10 +16,19 @@ export default async function AdminCampaignsPage() {
   const { data: profile } = await supabase.from("profiles").select("role").eq("id", user.id).single();
   if (profile?.role !== "admin") redirect("/dashboard");
 
-  const { data: campaigns } = await supabase
+  const { data: campaigns, error: campaignError } = await supabase
     .from("campaigns")
     .select("id, title, slug, status, collected_amount, target_amount, donor_count, deadline, created_at, categories(name)")
     .order("created_at", { ascending: false });
+
+  if (campaignError) {
+    return (
+      <div className="max-w-xl mx-auto mt-10 p-6 bg-red-50 border border-red-200 rounded-2xl">
+        <h2 className="font-bold text-red-700 mb-2">Debug Error</h2>
+        <pre className="text-xs text-red-600 whitespace-pre-wrap">{JSON.stringify(campaignError, null, 2)}</pre>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-6xl mx-auto space-y-6">
