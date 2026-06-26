@@ -1,3 +1,4 @@
+import { randomUUID } from "crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { Snap } from "midtrans-client";
@@ -48,13 +49,14 @@ export async function POST(req: NextRequest) {
     // Get logged-in user if any
     const { data: { user } } = await supabase.auth.getUser();
 
-    // Generate unique order id
+    // Generate IDs upfront — hindari SELECT setelah INSERT (RLS memblokir anon SELECT)
+    const donationId = randomUUID();
     const orderId = `DON-${Date.now()}-${Math.random().toString(36).slice(2, 7).toUpperCase()}`;
 
-    // Create donation record
-    const { data: donation, error: donationError } = await supabase
+    const { error: donationError } = await supabase
       .from("donations")
       .insert({
+        id: donationId,
         campaign_id: data.campaign_id,
         donor_id: user?.id ?? null,
         donor_name: data.is_anonymous ? "Hamba Allah" : data.donor_name,
@@ -69,11 +71,9 @@ export async function POST(req: NextRequest) {
         referral_code: data.referral_code ?? null,
         is_recurring: false,
         crm_synced: false,
-      })
-      .select("id")
-      .single();
+      });
 
-    if (donationError || !donation) {
+    if (donationError) {
       console.error("Donation insert error:", donationError);
       return NextResponse.json({ error: "Gagal membuat donasi" }, { status: 500 });
     }
@@ -81,7 +81,7 @@ export async function POST(req: NextRequest) {
     // Save prayer if message provided
     if (data.message) {
       await supabase.from("donation_prayers").insert({
-        donation_id: donation.id,
+        donation_id: donationId,
         campaign_id: data.campaign_id,
         donor_name: data.is_anonymous ? "Hamba Allah" : data.donor_name,
         message: data.message,
@@ -91,7 +91,7 @@ export async function POST(req: NextRequest) {
 
     // Manual transfer — return donation_id only
     if (data.payment_method === "transfer_manual") {
-      return NextResponse.json({ donation_id: donation.id });
+      return NextResponse.json({ donation_id: donationId });
     }
 
     // Midtrans Snap — create token
@@ -114,12 +114,12 @@ export async function POST(req: NextRequest) {
         },
       ],
       callbacks: {
-        finish: `${process.env.NEXT_PUBLIC_BASE_URL}/donation/success/${donation.id}`,
+        finish: `${process.env.NEXT_PUBLIC_BASE_URL}/donation/success/${donationId}`,
       },
     });
 
     return NextResponse.json({
-      donation_id: donation.id,
+      donation_id: donationId,
       snap_token: snapTransaction.token,
     });
   } catch (err) {
