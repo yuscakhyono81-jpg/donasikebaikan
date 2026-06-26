@@ -68,7 +68,7 @@ export default async function DonationSuccessPage({ params }: { params: Promise<
             className="flex items-center justify-center gap-2 w-full py-3 px-4 bg-primary-600 text-white rounded-xl font-semibold hover:bg-primary-700 transition-colors"
           >
             <Download className="w-4 h-4" />
-            Unduh Sertifikat Donasi
+            Unduh Bukti Terima Donasi
           </a>
 
           {campaign && (
