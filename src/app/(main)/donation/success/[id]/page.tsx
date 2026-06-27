@@ -99,7 +99,7 @@ export default async function DonationSuccessPage({ params }: { params: Promise<
           {/* Tombol unduh hanya muncul setelah diverifikasi */}
           {isVerified && (
             <a
-              href={`/api/donations/certificate/${donation.id}`}
+              href={`/api/donations/receipt/${donation.id}`}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center justify-center gap-2 w-full py-3 px-4 bg-primary-600 text-white rounded-xl font-semibold hover:bg-primary-700 transition-colors"

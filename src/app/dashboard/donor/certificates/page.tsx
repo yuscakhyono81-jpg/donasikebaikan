@@ -48,11 +48,11 @@ export default async function DonorCertificatesPage() {
                   <p className="text-sm font-bold text-primary-600 mt-0.5">{formatRupiah(d.amount as number)}</p>
                 </div>
                 <a
-                  href={`/api/donations/certificate/${d.id}`}
+                  href={`/api/donations/receipt/${d.id}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="p-2 text-slate-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors shrink-0"
-                  title="Download sertifikat"
+                  title="Download bukti terima donasi"
                 >
                   <Download size={18} />
                 </a>
