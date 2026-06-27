@@ -56,13 +56,20 @@ export async function POST(req: NextRequest) {
     const { data: urlData } = supabase.storage.from("donation-proofs").getPublicUrl(filePath);
 
     // Update donation with proof_url
-    const { error: updateError } = await supabase
+    // Gunakan .select() agar bisa cek apakah row benar-benar ter-update (RLS bisa blokir silently)
+    const { data: updatedRows, error: updateError } = await supabase
       .from("donations")
       .update({ proof_url: urlData.publicUrl })
-      .eq("id", donationId);
+      .eq("id", donationId)
+      .select("id");
 
     if (updateError) {
+      console.error("Update proof_url error:", updateError);
       return NextResponse.json({ error: "Gagal menyimpan bukti" }, { status: 500 });
+    }
+    if (!updatedRows || updatedRows.length === 0) {
+      console.error("Update proof_url blocked (RLS atau donasi tidak ditemukan):", donationId);
+      return NextResponse.json({ error: "Gagal menyimpan bukti transfer. Jalankan SQL fix RLS di Supabase." }, { status: 500 });
     }
 
     // Fire-and-forget WA notifications — don't block the response
