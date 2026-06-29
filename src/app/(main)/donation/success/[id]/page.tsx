@@ -96,18 +96,16 @@ export default async function DonationSuccessPage({ params }: { params: Promise<
         </div>
 
         <div className="flex flex-col gap-3">
-          {/* Tombol unduh hanya muncul setelah diverifikasi */}
-          {isVerified && (
-            <a
-              href={`/api/donations/receipt/${donation.id}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center justify-center gap-2 w-full py-3 px-4 bg-primary-600 text-white rounded-xl font-semibold hover:bg-primary-700 transition-colors"
-            >
-              <Download className="w-4 h-4" />
-              Unduh Bukti Terima Donasi
-            </a>
-          )}
+          {/* Tombol unduh bukti donasi — selalu tampil */}
+          <a
+            href={`/api/donations/receipt/${donation.id}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center justify-center gap-2 w-full py-3 px-4 bg-primary-600 text-white rounded-xl font-semibold hover:bg-primary-700 transition-colors"
+          >
+            <Download className="w-4 h-4" />
+            Unduh Bukti Donasi
+          </a>
 
           {campaign && (
             <Link

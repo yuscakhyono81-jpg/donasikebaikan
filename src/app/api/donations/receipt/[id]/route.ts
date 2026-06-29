@@ -29,9 +29,6 @@ export async function GET(
   if (error || !donation) {
     return NextResponse.json({ error: "Donasi tidak ditemukan" }, { status: 404 });
   }
-  if (donation.status !== "success") {
-    return NextResponse.json({ error: "Bukti hanya tersedia setelah donasi diverifikasi" }, { status: 400 });
-  }
 
   const settings: Record<string, string> = {};
   for (const row of settingsRows ?? []) settings[row.key] = row.value;
